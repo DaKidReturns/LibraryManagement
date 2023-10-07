@@ -22,6 +22,8 @@ namespace LibraryManagement
 
         public List<(IMember, Book)> BookAvailableMemberToNotify { get; }
 
+        public WaitListClass WaitList { get; }
+
         /// <summary>
         /// A member of the library can issue a book
         /// Returns true if book is issued and the process is successful
@@ -37,19 +39,27 @@ namespace LibraryManagement
                 return false;
             }
 
-            if ((bookToBeIssued.DateOfArrival - DateTime.Now).TotalDays < 7) {
+            if ((DateTime.Now - bookToBeIssued.DateOfArrival ).TotalDays < 7) {
                 return false;
             }
 
-            member.BorrowedBooks.Add(bookToBeIssued);
+            member.IssuedList.Add(bookToBeIssued);
             bookToBeIssued.IsIssued = true;
             bookToBeIssued.IssuedBy = member;
             return true;
         }
 
-        public bool RegisterWaitList(IMember member, Book bookToBeIssued) { 
-            
-        
+        /// <summary>
+        /// Function to add a member to the waitList
+        /// Checks if a member has existing waitList entries
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="bookToBeIssued"></param>
+        /// <returns></returns>
+        public bool RegisterToWaitList(IMember member, Book bookToBeIssued) {
+            if (!WaitList.WaitListIsAvailable(member)) return false;
+            WaitList.AddToList(member, bookToBeIssued);
+            return true;
         }
     }
 }

@@ -20,6 +20,6 @@ namespace LibraryManagement
         public string Name { get => name; set => name = value; }
         public string Address { get => address; set => address = value; }
         public string Email { get => email; set => email = value; }
-        public List<Book> BorrowedBooks { get => borrowedBooks;}
+        public List<Book> IssuedList { get => borrowedBooks;}
     }
 }

@@ -14,10 +14,11 @@ namespace LibraryManagement
     /// </summary>
     public interface IMember
     {
+        public event EventHandler<BookRelasedArgs> BookReleased;
         string Name { get; set; }
         string Address { get; set; }
         string Email { get; set; }
-        List<Book> BorrowedBooks { get; }
+        List<Book> IssuedList { get; }
 
         /// <summary>
         /// This function implements the querying books functionality for the members of the library
@@ -32,11 +33,37 @@ namespace LibraryManagement
                     orderby book.Title
                     orderby book.YearOfPublication
                     select book).ToList();
+        }
 
+        public bool ReturnBook(Book book) {
+            if (IssuedList.Remove(book))
+            {
+                // Notify all the subscribers that book has been released
+                BookRelasedArgs e = new BookRelasedArgs(book);
+                BookRelasedEvent(e);
+                return true;
+                
+            }
+            else {
+                return false;
+            }
+        
+        }
 
+        void BookRelasedEvent(BookRelasedArgs e) {
+            if (BookReleased != null)
+            {
+                BookReleased(this, e);
+            }
         }
 
         
 
+    }
+    public class BookRelasedArgs : EventArgs
+    {
+        public Book book { get; set; }
+
+        public BookRelasedArgs(Book book) { this.book = book; }
     }
 }
